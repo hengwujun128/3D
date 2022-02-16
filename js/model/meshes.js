@@ -53,6 +53,10 @@ export const getMesh=(scene, geo='box')=>{
   // 创建网格模型mesh: 基于geometry 和 material,最后添加到 scene 中
   //创建一个立方体几何对象Geometry
   const geometry = geometryMap[geo]
+  console.log(geometry);
+  console.log('geometry.isBufferGeometry',geometry.isBufferGeometry);
+  console.log('几何体顶点位置数据',geometry.attributes.position);
+  console.log('几何索引',geometry.index);
   // 创建球体
   // const geometry = sphereGeometry
   // MeshLambertMaterial()实现漫反射进行渲染

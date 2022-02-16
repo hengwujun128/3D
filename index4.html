@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/> -->
 
-  <title>第一个three.js文件</title>
+  <title>material</title>
   <style>
     html,body{
       height:100%;
@@ -22,25 +22,57 @@
 </body>
 <script type="module">
 // import * as Three from 'three'
-import {getMesh} from './js/model/meshes.js';
+// import {getMesh} from './js/model/meshes.js';
 import {getLight} from './js/light/light.js';
 import {orbitControls} from './js/controls/orbitControls.js';
 const scene = new THREE.Scene();
 
   console.log('scene', scene)
-  const mesh1 = getMesh(scene,'box');
-  scene.add(mesh1);
+  var geometry = new THREE.BoxGeometry(100, 100, 100); //创建一个球体几何对象
+  geometry.center()
+  // 点渲染模式
+  var pointMaterial = new THREE.PointsMaterial({
+    color: 0x0000ff, //颜色
+    size: 10, //点渲染尺寸
+  });
 
-  const mesh2 = getMesh(scene,'sphere');
-  mesh2.translateY(130); //球体网格模型沿Y轴正方向平移120
-  scene.add(mesh2);
+//点模型对象  参数：几何体  点材质
+const pointModel = new THREE.Points(geometry, pointMaterial);
 
-  const mesh3 = getMesh(scene,'cylinder');
-  mesh3.position.set(150,0,0);//设置mesh3模型对象的xyz坐标为120,0,0
-  scene.add(mesh3)
+scene.add(pointModel)
+
+// 直线基础材质对象
+var lineMaterial = new THREE.LineBasicMaterial({
+   // transparent设置为true，开启透明，否则opacity不起作用
+  transparent: true,
+  // 设置材质透明度
+  opacity: 0.1,
+  color: 0x0000ff
+});
+
+console.log('----lineMaterial-----', lineMaterial)
+var line = new THREE.Line(geometry, lineMaterial); //线模型对象
+line.position.set(0,0,300)
+scene.add(line); //点模型添加到场景中
+
+// mesh 模型
+const meshMaterial = new THREE.MeshLambertMaterial({
+  color: 0x0000ff, //三角面颜色
+  wireframe: true
+})
+const meshModel = new THREE.Mesh(geometry, meshMaterial); //网格模型对象Mesh
+// 模型对象的缩放
+// meshModel.scale.set(0.5, 1.5,2)
+meshModel.scale.x = 2
+scene.add(meshModel);
+
+
+  // const mesh1 = getMesh(scene,'box');
+  // scene.add(mesh1);
+
 
   // 辅助坐标系  参数500表示坐标系大小，可以根据场景大小去设置 红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴.
-const axisHelper = new THREE.AxisHelper(500);
+const axisHelper = new THREE.AxesHelper(800);
 scene.add(axisHelper);
   /**
      * 光源设置
@@ -80,7 +112,7 @@ scene.add(axisHelper);
     // renderer.render(scene, camera);
     function render() {
       renderer.render(scene, camera);
-      mesh1.rotateY(0.01);//每次绕y轴旋转0.01弧度 ,每一帧是在前一帧基础上的
+      // mesh1.rotateY(0.01);//每次绕y轴旋转0.01弧度 ,每一帧是在前一帧基础上的
       requestAnimationFrame(render);//请求再次执行渲染函数render
     }
     render()

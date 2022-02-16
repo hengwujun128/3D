@@ -22,22 +22,47 @@
 </body>
 <script type="module">
 // import * as Three from 'three'
-import {getMesh} from './js/model/meshes.js';
+// import {getMesh} from './js/model/meshes.js';
 import {getLight} from './js/light/light.js';
 import {orbitControls} from './js/controls/orbitControls.js';
 const scene = new THREE.Scene();
 
   console.log('scene', scene)
-  const mesh1 = getMesh(scene,'box');
-  scene.add(mesh1);
+  var geometry = new THREE.BoxGeometry(100, 100, 100); //创建一个立方体几何对象Geometry
+  // 访问几何体对象数据属性
+  // console.log(geometry);
+  // console.log('geometry.isBufferGeometry',geometry.isBufferGeometry);
+  // console.log('几何体顶点位置数据',geometry.attributes.position);
+  // console.log('几何索引',geometry.index);
 
-  const mesh2 = getMesh(scene,'sphere');
-  mesh2.translateY(130); //球体网格模型沿Y轴正方向平移120
-  scene.add(mesh2);
+  // 几何体旋转、缩放、平移变换
 
-  const mesh3 = getMesh(scene,'cylinder');
-  mesh3.position.set(150,0,0);//设置mesh3模型对象的xyz坐标为120,0,0
-  scene.add(mesh3)
+// 几何体xyz三个方向都放大2倍
+geometry.scale(2, 2, 2);
+geometry.scale(0.5, 1.5, 2);
+
+// 几何体沿着x轴平移50
+geometry.translate(150, 0, 0);
+// 几何体绕着x轴旋转45度
+// geometry.rotateX(Math.PI / 4);
+// 居中：偏移的几何体居中
+geometry.center();
+
+
+const material=new THREE.MeshPhongMaterial({
+  color:0x0000ff,
+  specular:0x4488ee,
+  shininess:12
+});
+const mesh1 = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+// 网格模型xyz方向分别缩放0.5,1.5,2倍
+// mesh1.scale.set(0.5, 1.5, 2)
+scene.add(mesh1)
+
+
+  // const mesh1 = getMesh(scene,'box');
+  // scene.add(mesh1);
+
 
   // 辅助坐标系  参数500表示坐标系大小，可以根据场景大小去设置 红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴.
 const axisHelper = new THREE.AxisHelper(500);
@@ -80,7 +105,7 @@ scene.add(axisHelper);
     // renderer.render(scene, camera);
     function render() {
       renderer.render(scene, camera);
-      mesh1.rotateY(0.01);//每次绕y轴旋转0.01弧度 ,每一帧是在前一帧基础上的
+      // mesh1.rotateY(0.01);//每次绕y轴旋转0.01弧度 ,每一帧是在前一帧基础上的
       requestAnimationFrame(render);//请求再次执行渲染函数render
     }
     render()

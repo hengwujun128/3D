@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顶点</title>
+  <script src="./node_modules/three/build/three.js"></script>
+  <script src="./node_modules/three/examples/js/controls/OrbitControls.js"></script>
+
+</head>
+<body>
+  <pre>
+    1. 设置Geometry顶点位置、顶点颜色数据
+    2. Face3对象定义Geometry的三角形面
+  </pre>
+</body>
+
+<script type="module">
+  import {orbitControls} from './js/controls/orbitControls.js';
+  import { Geometry } from './js/Geometry.js';
+  const scene = new THREE.Scene();
+  var geometry = new Geometry(); 
+
+  // 1. 设置四个顶点: 两个三角形有6个顶点，但是两个顶点位置重合的，可以设置4个顶点即可。
+
+  var p1 = new THREE.Vector3(0, 0, 0); // 顶点 1 坐标
+  var p2 = new THREE.Vector3(0,100,0)
+  var p3 = new THREE.Vector3(100, 0, 0)
+  var p4 = new THREE.Vector3(0,0,100)
+  geometry.vertices.push(p1,p2,p3,p4);
+
+
+// 2. Face3构建三角形: 不要设置顶点位置坐标数据,只需要通过数组索引值从geometry.vertices数组中获得顶点位置坐标数据
+
+var face1 = new THREE.Face3(0, 1, 2); 
+//三角面每个顶点的法向量
+var n1 = new THREE.Vector3(0, 0, -1); //三角面Face1顶点1的法向量
+var n2 = new THREE.Vector3(0, 0, -1); //三角面2Face2顶点2的法向量
+var n3 = new THREE.Vector3(0, 0, -1); //三角面3Face3顶点3的法向量
+// 设置三角面Face三个顶点的法向量
+face1.vertexNormals.push(n1,n2,n3);
+
+// 三角面2
+var face2 = new THREE.Face3(0, 2, 3);
+// 设置三角面法向量
+face2.normal=new THREE.Vector3(0, -1, 0);
+
+//三角面face1、face2添加到几何体中
+geometry.faces.push(face1,face2);
+
+
+  // (网格模型)渲染模式
+  var material = new THREE.MeshBasicMaterial({
+    // color: 0x0000ff, //三角面颜色
+    vertexColors: THREE.VertexColors, //以顶点颜色为准
+    side: THREE.DoubleSide //两面可见
+  });
+  var mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+  scene.add(mesh);
+
+// (点模型)渲染模式
+// var material = new THREE.PointsMaterial({
+//   // 使用顶点颜色数据渲染模型，不需要再定义color属性
+//   // color: 0xff0000,
+//   vertexColors: THREE.VertexColors, //以顶点颜色为准
+//   size: 10.0 //点对象像素尺寸
+// });
+// var points = new THREE.Points(geometry, material); //点模型对象
+// scene.add(points); //点对象添加到场景中
+
+// (线模型)渲染模式
+// var material=new THREE.LineBasicMaterial({
+//     // color:0xff0000 //线条颜色
+//     vertexColors: THREE.VertexColors, //以顶点颜色为准
+// });
+// var line=new THREE.Line(geometry,material);//线条模型对象
+// scene.add(line);//线条对象添加到场景中
+
+  const axisHelper = new THREE.AxisHelper(500);
+  scene.add(axisHelper);
+
+  /**
+     * 光源设置
+     */
+    //点光源
+    const point = new THREE.PointLight(0xffffff); // 0xffffff 光照强度
+    point.position.set(400, 200, 300); //点光源位置(camera 会使用这个point.position)
+    scene.add(point); //点光源添加到场景中
+    //环境光
+    const ambient = new THREE.AmbientLight(0x444444);
+    scene.add(ambient);
+
+    /**
+     * 相机设置
+     */
+    const width = window.innerWidth; //窗口宽度
+    const height = window.innerHeight; //窗口高度
+    const k = width / height; //窗口宽高比
+    const s = 200; //三维场景显示范围控制系数，系数越大，显示的范围越大
+
+    const camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+    //设置相机位置
+    camera.position.set(400, 400, 300); // 相机位置不同,物体的显示就不同
+    camera.lookAt(scene.position); //设置相机方向(指向的场景对象)
+
+  /**
+     * 创建渲染器对象
+     */
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(width, height);//设置渲染区域尺寸
+    renderer.setClearColor(0xb9d3ff, 1); //设置背景颜色
+    document.body.appendChild(renderer.domElement); //body元素中插入canvas对象
+    //执行渲染操作   指定场景、相机作为参数
+    // renderer.render(scene, camera);
+    function render() {
+      renderer.render(scene, camera);
+      requestAnimationFrame(render);//请求再次执行渲染函数render
+    }
+    render()
+    const controls = orbitControls({camera, renderer})
+
+</script>
+</html>
